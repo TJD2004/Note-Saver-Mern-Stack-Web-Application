@@ -12,7 +12,10 @@ connectDB();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://note-saver-mern-stack-web.vercel.app',
+  credentails: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
