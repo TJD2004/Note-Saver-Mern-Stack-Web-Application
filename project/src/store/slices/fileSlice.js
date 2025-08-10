@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = 'https://note-saver-backend.onrender.com';
+const API_URL = 'https://note-saver-backend.onrender.com/api/auth';
 
 const getAuthConfig = () => {
   const token = localStorage.getItem('token');
