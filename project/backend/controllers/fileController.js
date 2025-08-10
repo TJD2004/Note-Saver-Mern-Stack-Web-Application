@@ -18,6 +18,7 @@ const getFiles = async (req, res) => {
 // @desc    Get single file
 // @route   GET /api/files/:id
 // @access  Private
+
 const getFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
@@ -41,6 +42,7 @@ const getFile = async (req, res) => {
 // @desc    Create new file
 // @route   POST /api/files
 // @access  Private
+
 const createFile = async (req, res) => {
   try {
     const { title, content } = req.body;
@@ -65,6 +67,7 @@ const createFile = async (req, res) => {
 // @desc    Update file
 // @route   PUT /api/files/:id
 // @access  Private
+
 const updateFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
@@ -94,6 +97,7 @@ const updateFile = async (req, res) => {
 // @desc    Delete file
 // @route   DELETE /api/files/:id
 // @access  Private
+
 const deleteFile = async (req, res) => {
   try {
     const file = await File.findById(req.params.id);
