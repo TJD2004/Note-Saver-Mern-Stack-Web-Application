@@ -59,6 +59,57 @@ const registerUser = async (req, res) => {
   }
 };
 
+
+const gooleLoginUser = async(req,res)=>{
+  try{
+    
+    const {email,name,password} = req.body
+    const user = await User.findOne({ email });
+    if(user){
+    return res.status(200).json({
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        token: generateToken(user._id),
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      });
+    }else{
+        const new_user = await User.create({
+          name,
+          email,
+          password,
+        });
+        if (new_user) {
+        return  res.status(201).json({
+            _id: new_user.id,
+            name: new_user.name,
+            email: new_user.email,
+            token: generateToken(new_user._id),
+            user: {
+              id: new_user._id,
+              name: new_user.name,
+              email: new_user.email,
+            },
+          });
+        } else{
+
+          return res.status(400).json({ message: 'Invalid data' });
+        }
+    }
+
+  }  
+  catch(err){
+     console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error' });
+  } 
+
+}
+
+
 // @desc    Authenticate a user
 // @route   POST /api/auth/login
 // @access  Public
@@ -108,6 +159,7 @@ const getMe = async (req, res) => {
 };
 
 module.exports = {
+  gooleLoginUser,
   registerUser,
   loginUser,
   getMe,

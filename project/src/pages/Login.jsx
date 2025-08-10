@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FileText, Eye, EyeOff, LogIn } from 'lucide-react';
 import { login, reset } from '../store/slices/authSlice';
 import LoadingSpinner from '../components/LoadingSpinner';
+import GoogleLoginButton from '../components/GoogleLoginButton'
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -129,6 +130,19 @@ const Login = () => {
               </button>
             </div>
           </form>
+            <div className="mt-4 sm:mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-600"></div>
+                </div>
+                <div className="relative flex justify-center text-xs sm:text-sm">
+                  <span className="px-2 bg-gray-800 bg-opacity-50 text-gray-300 text-xs sm:text-sm">Or continue with</span>
+                </div>
+              </div>
+              <div className="mt-4 sm:mt-6">
+                <GoogleLoginButton />
+              </div>
+            </div>
 
           <div className="mt-6">
             <div className="relative">

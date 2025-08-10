@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const API_URL = 'https://note-saver-backend.onrender.com/api/auth';
+// const API_URL = 'http://localhost:5000/api/auth';
 
 // Register user
 export const register = createAsyncThunk(
@@ -23,6 +24,36 @@ export const register = createAsyncThunk(
     }
   }
 );
+
+//Google Login
+
+export const registerAndLogin = createAsyncThunk(
+  'auth/registerAndLogin',
+  async ({ name, email, password }, thunkAPI) => {
+    try {
+      const registerResult = await thunkAPI.dispatch(register({ name, email, password }));
+
+      // ✅ If register failed (e.g., email exists), fallback to login
+      if (register.rejected.match(registerResult)) {
+        const loginResult = await thunkAPI.dispatch(login({ email, password }));
+
+        if (login.fulfilled.match(loginResult)) {
+          return loginResult.payload; // success fallback
+        } else {
+          return thunkAPI.rejectWithValue(loginResult.payload || loginResult.error.message);
+        }
+      }
+
+      // ✅ If register worked, now login
+      const loginResult = await thunkAPI.dispatch(login({ email, password }));
+
+      return loginResult.payload;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 
 // Login user
 export const login = createAsyncThunk(
@@ -66,6 +97,17 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.error = null;
     },
+    googlestate:(state,action)=>{
+      state.isLoading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+      localStorage.setItem('token', action.payload.token);
+      localStorage.setItem('user', JSON.stringify(action.payload.user));
+    },
+    isloadingSet:(state,action)=>{
+      state.isLoading = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -109,9 +151,23 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.isLoading = false;
         state.error = null;
-      });
+      })
+      .addCase(registerAndLogin.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    })
+    .addCase(registerAndLogin.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+    })
+    .addCase(registerAndLogin.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload || 'Something went wrong during register/login';
+    });
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { reset ,googlestate,isloadingSet} = authSlice.actions;
 export default authSlice.reducer;
